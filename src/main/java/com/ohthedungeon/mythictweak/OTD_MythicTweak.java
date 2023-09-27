@@ -19,34 +19,33 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class OTD_MythicTweak extends JavaPlugin {
     public static JavaPlugin instance;
     public boolean api_ready = false;
-    
+
     public static void consoleError(String msg) {
         console(Level.SEVERE, msg);
     }
-    
+
     public static void consoleInfo(String msg) {
         console(Level.INFO, msg);
     }
-    
+
     private static void console(Level level, String msg) {
         Bukkit.getLogger().log(level, msg);
     }
-    
-    
+
     @Override
     public void onEnable() {
         OTD_MythicTweak.instance = this;
-        
+
+        /*
         SpigotUpdater updater = new SpigotUpdater(this, 77129);
         try {
             if (updater.checkForUpdates())
                 consoleInfo(ChatColor.BLUE + "[OTD_MythicTweak] An update was found! Download: https://www.spigotmc.org/resources/otd_mythictweak.77129/");
         } catch (Exception e) {
-        }
+        }*/
 
-        
         try {
-            Class otd = Class.forName("otd.Main");
+            Class<?> otd = Class.forName("otd.Main");
             Field api = otd.getDeclaredField("api_version");
             api.setAccessible(true);
             Integer api_version = (Integer) api.get(null);
@@ -55,20 +54,20 @@ public class OTD_MythicTweak extends JavaPlugin {
             consoleError(ChatColor.RED + "Reflection failed... Are you using the latest version of [Oh The Dungeons You'll Go]?");
             this.api_ready = false;
         }
-        
+
         if(!this.api_ready) return;
-        
+
         SpawnerConfig.loadConfig();
-        
+
         consoleInfo(ChatColor.BLUE + "[OTD_MythicTweak] Start to hook [Oh The Dungeons You''ll Go] API");
-        
+
         Spawnable.handler = new MythicSpawnerHandler();
         consoleInfo(ChatColor.BLUE + "[OTD_MythicTweak] Hook success");
-        
+
         this.getCommand("otd_mt_info").setExecutor(new CommandInfo());
         this.getCommand("otd_mt_preventwalled").setExecutor(new CommandPreventWalled());
         this.getCommand("otd_mt_reload").setExecutor(new CommandReload());
-        
+
         Bukkit.getScheduler().runTaskLater(this, () -> {
             String[] strs = CommandInfo.getInfo();
             for(String str : strs) {
@@ -76,12 +75,11 @@ public class OTD_MythicTweak extends JavaPlugin {
             }
         }, 1L);
     }
-    
+
     @Override
     public void onDisable() {
         this.api_ready = false;
         consoleInfo(this.getDescription().getName() + " is disabled");
     }
-    
-    
+
 }

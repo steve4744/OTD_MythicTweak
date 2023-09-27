@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Random;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import shadow_lib.api.SpawnerApi;
+import otd.lib.spawner.SpawnerApi;
 
 /**
  *
